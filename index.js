@@ -5,6 +5,7 @@ var io = require("socket.io").listen(server);
 users = [];
 connections = [];
 choices = [];
+var score = 0;
 const router = require("./router");
 
 server.listen(process.env.PORT || 5000);
@@ -16,6 +17,11 @@ app.use(router);
 //   res.sendFile(__dirname + "/index.html");
 // });
 
+// const lasttime = Date.now();
+// // console.log(lasttime);
+// if (lasttime - Date.now() < 1000) {
+//   return null;
+// }
 io.sockets.on("connection", function (socket) {
   connections.push(socket);
   console.log("Connected: %s sockets connected", connections.length);
@@ -159,7 +165,9 @@ io.sockets.on("connection", function (socket) {
       choices = [];
     }
   });
-
+  socket.on("uncaughtException", function (err) {
+    console.info(util.inspect(err, { colors: true }));
+  });
   function updateUsernames() {
     io.sockets.emit("get user", users);
   }
