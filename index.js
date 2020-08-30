@@ -54,20 +54,52 @@ io.sockets.on("connection", function (socket) {
     console.log("%s chose %s.", username, choice);
 
     if (choices.length == 2) {
-      console.log("[socket.io] Both players have made choices.");
-
+      //   console.log("[socket.io] Both players have made choices.");
+      //   console.log("masuk ke kondisi");
+      //   console.log("choices[0]", choices[0]);
+      //   console.log('choices[0]["choice"]', choices[0]["choice"]);
+      //   console.log("choices[1]", choices[1]);
+      //   console.log('choices[1]["choice"]', choices[1]["choice"]);
+      //   if (choices[0]["choice"] === "batu") {
+      //       if (choices[1]["choice"] === "batu") {
+      //           io.emit("tie", choices);
+      //           console.log("tie");
+      //       } else if (choices[1]["choice"] === "kertas") {
+      //           console.log("player 2 win");
+      //           io.emit("player 2 win", choices);
+      //       } else if (choices[1]["choice"] === "gunting") {
+      //           console.log("player 1 win");
+      //           io.emit("player 1 win", choices);
+      //     }
+      //   } else if (choices[0]["choice"] === "kertas") {
+      //     if (choices[1]["choice"] === "batu") {
+      //     } else if (choices[1]["choice"] === "kertas") {
+      //     } else if (choices[1]["choice"] === "gunting") {
+      //     }
+      //   } else if (choices[0]["choice"] === "gunting") {
+      //     if (choices[1]["choice"] === "batu") {
+      //       //
+      //     } else if (choices[1]["choice"] === "kertas") {
+      //       //
+      //     } else if (choices[1]["choice"] === "gunting") {
+      //       //
+      //     }
+      //   }
       switch (choices[0]["choice"]) {
-        case "rock":
+        case "batu":
           switch (choices[1]["choice"]) {
-            case "rock":
+            case "batu":
               io.emit("tie", choices);
+              console.log("tie");
               break;
 
-            case "paper":
+            case "kertas":
+              console.log("player 1win");
               io.emit("player 2 win", choices);
               break;
 
-            case "scissors":
+            case "gunting":
+              console.log("player 2win");
               io.emit("player 1 win", choices);
               break;
 
@@ -76,17 +108,20 @@ io.sockets.on("connection", function (socket) {
           }
           break;
 
-        case "paper":
+        case "kertas":
           switch (choices[1]["choice"]) {
-            case "rock":
+            case "batu":
+              console.log("p1win");
               io.emit("player 1 win", choices);
               break;
 
-            case "paper":
+            case "kertas":
+              console.log("tie");
               io.emit("tie", choices);
               break;
 
-            case "scissors":
+            case "gunting":
+              console.log("p2win");
               io.emit("player 2 win", choices);
               break;
 
@@ -95,17 +130,20 @@ io.sockets.on("connection", function (socket) {
           }
           break;
 
-        case "scissors":
+        case "gunting":
           switch (choices[1]["choice"]) {
-            case "rock":
+            case "batu":
+              console.log("p2in");
               io.emit("player 2 win", choices);
               break;
 
-            case "paper":
+            case "kertas":
+              console.log("p1win");
               io.emit("player 1 win", choices);
               break;
 
-            case "scissors":
+            case "gunting":
+              console.log("tie");
               io.emit("tie", choices);
               break;
 
