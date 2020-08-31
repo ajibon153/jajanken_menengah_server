@@ -24,42 +24,28 @@ console.log("Sever running...");
 
 app.use(router);
 
-// app.get("/", function (rer, res) {
-//   res.sendFile(__dirname + "/index.html");
-// });
-
-// const lasttime = Date.now();
-// // console.log(lasttime);
-// if (lasttime - Date.now() < 1000) {
-//   return null;
-// }
-// setInterval(function () {
-// io.set("transports", ["websocket"]);
-// setInterval(function () {
 io.sockets.on("connection", function (socket) {
-  // setInterval(function () {
   connections.push(socket);
   console.log("Connected: %s sockets connected", connections.length);
-  // }, 2000);
 
-  // socket.on("disconnect", function (data) {
-  //   users.splice(users.indexOf(socket.username), 1);
-  //   updateUsernames();
-  //   connections.splice(connections.indexOf(socket), 1);
-  //   io.emit("disconnected", socket.username);
-  //   // users = [];
-  //   console.log("Disconnected: %s sockets connected", connections.length);
-  // });
+  socket.on("disconnect", function (data) {
+    users.splice(users.indexOf(socket.username), 1);
+    updateUsernames();
+    connections.splice(connections.indexOf(socket), 1);
+    io.emit("disconnected", socket.username);
+    // users = [];
+    console.log("Disconnected: %s sockets connected", connections.length);
+  });
 
   socket.on("send message", function (data, callback) {
     // const result = JSON.parse(message.utf8Data);
     const { method } = data;
 
-    // io.sockets.emit("new message", { msg: data, user: socket.username });
     if (method === "add user") {
       socket.username = data;
       if (users.indexOf(socket.username) > -1) {
         callback(false);
+        return false;
       } else {
         let payload;
         if (Object.keys(users).length < 1) {
@@ -68,17 +54,27 @@ io.sockets.on("connection", function (socket) {
             player: "one",
             score: data.score,
           };
+        } else if (Object.keys(users).length == 1) {
+          if (users[0].name != data.name) {
+            payload = {
+              name: data.name,
+              player: "two",
+              score: data.score,
+            };
+          } else {
+            callback({
+              error: "nama user sudah di pakai, mohon gunakan nama yang lain",
+            });
+            return false;
+          }
         } else {
-          payload = {
-            name: data.name,
-            player: "two",
-            score: data.score,
-          };
+          callback(false);
+          return false;
         }
+
         users.push(payload);
-        // users.concat(socket.username);
         updateUsernames();
-        callback(payload);
+        callback(users);
 
         if (Object.keys(users).length == 2) {
           io.emit("connected", socket.username);
@@ -93,10 +89,7 @@ io.sockets.on("connection", function (socket) {
       console.log("start choice", data);
       const { name, choice, player } = data;
       temp_choices.push(data);
-      // console.log(temp_choices);
-      // Array.prototype.move = function (from, to) {
-      //   this.splice(to, 0, this.splice(from, 1)[0]);
-      // };
+
       const swapPositions = (array, a, b) => {
         return ([array[a], array[b]] = [array[b], array[a]]);
       };
@@ -112,11 +105,11 @@ io.sockets.on("connection", function (socket) {
         } else {
           choices.push(temp_choices);
         }
-        console.log("all choices", choices);
-        console.log("==============================================");
-        console.log("%s chose %s.", name, choice);
-        console.log('choices[0][0]["choice"]', choices[0][0]["choice"]);
-        console.log('choices[0][1]["choice"]', choices[0][1]["choice"]);
+        // console.log("all choices", choices);
+        // console.log("==============================================");
+        // console.log("%s chose %s.", name, choice);
+        // console.log('choices[0][0]["choice"]', choices[0][0]["choice"]);
+        // console.log('choices[0][1]["choice"]', choices[0][1]["choice"]);
         switch (choices[0][0]["choice"]) {
           case "batu":
             switch (choices[0][1]["choice"]) {
@@ -233,13 +226,8 @@ io.sockets.on("connection", function (socket) {
     console.info(util.inspect(err, { colors: true }));
   });
 });
-// }, 1000);
+
 function updateUsernames() {
-  // console.log("update", users);
-  // setInterval(function () {
   io.sockets.emit("get user", users);
-  console.log("update users", users);
-  // }, 1000);
+  // console.log("update users", users);
 }
-// }, 3000);
-//
