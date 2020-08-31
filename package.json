@@ -5,11 +5,15 @@
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon ."
+    "server": "nodemon index.js",
+    "start": "nodemon index.js",
+    "client": "npm run start --prefix client",
+    "dev": "concurrently \"npm run client\" \"npm run server\""
   },
   "author": "Ajibon",
   "license": "ISC",
   "dependencies": {
+    "concurrently": "^5.3.0",
     "express": "*",
     "nodemon": "*",
     "socket.io": "^2.1.1"
