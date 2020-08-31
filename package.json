@@ -12,6 +12,6 @@
   "dependencies": {
     "express": "*",
     "nodemon": "*",
-    "socket.io": "*"
+    "socket.io": "^2.1.1"
   }
 }
